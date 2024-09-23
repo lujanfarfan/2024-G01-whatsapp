@@ -8,13 +8,12 @@ const SQL_CONFIGURATION_DATA =
 {
 	host: "10.1.5.205", //IP privada del servidor del colegio
 	//host: "186.18.137.196", //IP pública del servidor del colegio
-	user: "2024-",
-	password: "laContraseñaDeTuGrupo",
-	database: "elNombreDeLaDatabaseDeTuGrupo",
+	user: "2024-5BINF-G01",
+	password: "ositos",
+	database: "2024-5BINF-G01",
 	port: 3306,
 	charset: 'UTF8_GENERAL_CI'
 }
-
 /**
  * Realiza una query a la base de datos MySQL indicada en el archivo "mysql.js".
  * @param {String} queryString Query que se desea realizar. Textual como se utilizaría en el MySQL Workbench.
