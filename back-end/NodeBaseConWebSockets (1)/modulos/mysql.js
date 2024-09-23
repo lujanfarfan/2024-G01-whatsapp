@@ -8,7 +8,7 @@ const SQL_CONFIGURATION_DATA =
 {
 	host: "10.1.5.205", //IP privada del servidor del colegio
 	//host: "186.18.137.196", //IP pública del servidor del colegio
-	user: "elNombreDeUsuarioDeTuGrupo",
+	user: "2024-",
 	password: "laContraseñaDeTuGrupo",
 	database: "elNombreDeLaDatabaseDeTuGrupo",
 	port: 3306,
