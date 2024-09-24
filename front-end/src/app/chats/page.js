@@ -23,7 +23,7 @@ export default function Home() {
     fetchPosts()
   }, [])
  
-  const handleChatClick = (chatId) => {
+  const handleChatClick = async (chatId) => {
     const chat = chatData.find(chat => chat.id === chatId);
     setSelectedChat(chat);
     setChatMessages(prevMessages => ({
