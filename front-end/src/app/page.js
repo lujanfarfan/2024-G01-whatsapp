@@ -4,16 +4,21 @@ import Button from "./components/button";
 import Link from 'next/link'
 
 export default function Home() {
+  const [number, setNumber] = useState()
+
   async function chats() {
-    const [number, setNumber] = useState()
+    const data = {
+      number: number
+    }
     const response = await fetch('http://localhost:4000/', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Cotent-Type': 'application/json'
       },
-      body: JSON.stringify()
+      body: JSON.stringify(data)
     });
+
     if (response != 0) {
       <Link href="/chats">
       </Link>

@@ -1,12 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const MySQL = require('./modulos/mysql');
+const db = require('./modulos/mysql');
 const session = require('express-session');
+var cors = require('cors')
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors())
 
 const LISTEN_PORT = 4000;
 const server = app.listen(LISTEN_PORT, () => {
@@ -34,12 +36,15 @@ io.use((socket, next) => {
 });
 
 // Obtener contactos
-app.get('/chats', (req, res) => {
-	db.query('SELECT * FROM contacts', (err, results) => {
-		if (err) return res.status(500).send(err);
+app.get('/chats', async (req, res) => {
+	try {
+		const results = await db.query('SELECT * FROM contacts');
 		res.json(results);
-	});
+	} catch (err) {
+		res.status(500).send(err);
+	}
 });
+
 
 // Obtener mensajes
 app.get('/chats', (req, res) => {
@@ -65,16 +70,13 @@ app.post('/chats', function (req, res) {
 	}
 });
 
-app.post('/', function (req, res) {
-    const {phoneNumber} = req.body;
+app.post('/', async (req, res) => {
+    const { phoneNumber } = req.body;
+
     try {
-        db.query('SELECT phone_number FROM users WHERE phone_number = ?', [phoneNumber], function (err, results) {
-            if (err) {
-                return res.status(500).send(err);
-            }
-            const exists = results.length > 0; 
-            res.json({ exists });
-        });
+        const results = await db.query('SELECT phone_number FROM users WHERE phone_number = ?', [phoneNumber]);
+        const exists = results.length > 0; 
+        res.send(exists);
     } catch (error) {
         res.status(500).send(error);
     }
