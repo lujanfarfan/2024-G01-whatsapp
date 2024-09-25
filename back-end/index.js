@@ -66,7 +66,7 @@ app.post('/chats', function (req, res) {
 });
 
 app.post('/', function (req, res) {
-    const { phoneNumber } = req.body;
+    const {phoneNumber} = req.body;
     try {
         db.query('SELECT phone_number FROM users WHERE phone_number = ?', [phoneNumber], function (err, results) {
             if (err) {
