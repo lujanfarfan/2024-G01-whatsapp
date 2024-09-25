@@ -1,30 +1,38 @@
 "use client";
 import { useState } from "react";
 import Button from "./components/button";
-import Link from 'next/link'
+import Link from "next/link";
 
 export default function Home() {
-  const [number, setNumber] = useState()
+  const [number, setNumber] = useState(0)
 
-  async function chats() {
+
+  async function traerNumeros() {
     const data = {
       number: number
     }
-    const response = await fetch('http://localhost:4000/', {
+    console.log({data})
+    const response = await fetch('http://localhost:4000/cualquierCosa', {
       method: 'POST',
+      body: JSON.stringify(data),
       headers: {
-        Accept: 'application/json',
-        'Cotent-Type': 'application/json'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(data)
     });
 
+    return response.json()
+  }
+
+  async function chats() {
+
+    var response = await traerNumeros();
+
     if (response != 0) {
-      <Link href="/chats">
-      </Link>
+      return location.href = '/chats'
     }
     else {
-      console.log("no existe")
+      alert("no existe")
     }}
 
     return (

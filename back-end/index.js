@@ -70,11 +70,12 @@ app.post('/chats', function (req, res) {
 	}
 });
 
-app.post('/', async (req, res) => {
-    const { phoneNumber } = req.body;
+app.post('/cualquierCosa', async (req, res) => {
+    const phoneNumber = req.body.number;
+	console.log(req.body)
 
     try {
-        const results = await db.query('SELECT phone_number FROM users WHERE phone_number = ?', [phoneNumber]);
+        const results = await db.query(`SELECT * FROM users WHERE phone_number = ${phoneNumber}`);
         const exists = results.length > 0; 
         res.send(exists);
     } catch (error) {
