@@ -36,9 +36,9 @@ io.use((socket, next) => {
 });
 
 // Obtener contactos
-app.get('/chats', async (req, res) => {
+app.get('/contactos', async (req, res) => {
 	try {
-		const results = await db.query('SELECT * FROM contacts');
+		const results = await db.query('SELECT * FROM users');
 		res.json(results);
 	} catch (err) {
 		res.status(500).send(err);

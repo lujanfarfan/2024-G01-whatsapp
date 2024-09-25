@@ -16,7 +16,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchPosts() {
-      let res = await fetch('http://localhost:3000/chats')
+      let res = await fetch('http://localhost:3000/contactos')
       let data = await res.json()
       console.log(data, "HOLA")
     }
