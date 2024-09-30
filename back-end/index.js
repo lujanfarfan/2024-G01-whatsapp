@@ -55,29 +55,37 @@ app.get('/chats', (req, res) => {
 	});
 });
 
+app.get('/chats/:chatId', (req, res) => {
+	const { chatId } = req.params;
+	db.query('SELECT * FROM messages WHERE chat_id = ?', [chatId], (err, results) => {
+	  if (err) return res.status(500).send(err);
+	  res.json(results);  
+	});
+  });
+
 // Enviar un nuevo mensaje
-app.post('/chats', function (req, res) {
+app.post('/chats', (req, res) => {
 	const { chatId, sender, text } = req.body;
-	try {
-		db.query('INSERT INTO messages (chat_id, sender, text) VALUES (?, ?, ?)', [chatId, sender, text], function (err, results) {
-			if (err) {
-				return res.status(500).send(err);
-			}
-			res.status(201).json({ id: results.insertId, chatId, sender, text });
-		});
-	} catch (error) {
-		res.status(500).send(error);
-	}
-});
+	db.query(
+	  'INSERT INTO messages (chat_id, sender, text) VALUES (?, ?, ?)',
+	  [chatId, sender, text],
+	  (err, results) => {
+		if (err) {
+		  return res.status(500).send(err);
+		}
+		res.status(201).json({ id: results.insertId, chatId, sender, text });
+	  }
+	);
+  });
 
 app.post('/cualquierCosa', async (req, res) => {
     const phoneNumber = req.body.number;
 	console.log(req.body)
 
     try {
-        const results = await db.query(`SELECT * FROM users WHERE phone_number = ${phoneNumber}`);
+        const results = await db.query(`SELECT phone_number FROM users WHERE phone_number = ${phoneNumber}`);
         const exists = results.length > 0; 
-        res.send(exists);
+        res.send(results);
     } catch (error) {
         res.status(500).send(error);
     }

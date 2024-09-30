@@ -27,8 +27,11 @@ export default function Home() {
   async function chats() {
 
     var response = await traerNumeros();
-
+    
     if (response != 0) {
+      // num = response.data
+      // console.log(num)
+      // localStorage.setItem("num", `${num}`)
       return location.href = '/chats'
     }
     else {
