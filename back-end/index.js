@@ -46,6 +46,15 @@ app.get('/contactos', async (req, res) => {
 });
 
 
+app.get('/getChats', async (req, res) => {
+	try {
+		const results = await db.query('SELECT * FROM chats');
+		res.json(results);
+	} catch (err) {
+		res.status(500).send(err);
+	}
+});
+
 // Obtener mensajes
 app.get('/chats', (req, res) => {
 	const { chatId } = req.params;

@@ -29,9 +29,9 @@ export default function Home() {
     var response = await traerNumeros();
     
     if (response != 0) {
-      // num = response.data
-      // console.log(num)
-      // localStorage.setItem("num", `${num}`)
+       let num = response.data
+      console.log(num)
+       localStorage.setItem("num", `${num}`)
       return location.href = '/chats'
     }
     else {
