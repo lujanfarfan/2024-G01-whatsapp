@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import ChatList from '../components/ChatList';
 import CrearGrupo from '../components/CrearGrupo';
-
 
 export default function Home() {
   const [chatData, setChatData] = useState([]);
@@ -13,26 +12,34 @@ export default function Home() {
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [chatMessages, setChatMessages] = useState({});
   const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchPosts() {
-      let res = await fetch('http://localhost:4000/getChats')
-      let data = await res.json()
-      console.log(data, "HOLA")
-    }
-    fetchPosts()
-  }, [])
- 
-  const handleChatClick = async (chatId) => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch('http://localhost:4000/getChats');
+        const data = await res.json();
+
+        setChatData(data);
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  const handleChatClick = useCallback((chatId) => {
     const chat = chatData.find(chat => chat.id === chatId);
     setSelectedChat(chat);
     setChatMessages(prevMessages => ({
       ...prevMessages,
-      [chatId]: prevMessages[chatId] || [{ text: chat.lastMessage, sender: chat.name }],
+      [chatId]: prevMessages[chatId] || [{ text: chat.message_text, sender: chat.chat_name }],
     }));
-  };
+  }, [chatData]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(() => {
     if (newMessage.trim() === '') return;
 
     const chatId = selectedChat.id;
@@ -45,26 +52,31 @@ export default function Home() {
 
     setChatData(prevData =>
       prevData.map(chat =>
-        chat.id === chatId ? { ...chat, lastMessage: newMessage } : chat
+        chat.id === chatId ? { ...chat, message_text: newMessage } : chat
       )
     );
 
     setNewMessage('');
-  };
+  }, [newMessage, selectedChat]);
 
-  const handleCreateGroup = () => {
+  const handleCreateGroup = useCallback(() => {
+    if (!groupName.trim()) return;
+
     const newGroup = {
       id: chatData.length + 1,
-      name: groupName,
-      lastMessage: `Grupo creado con ${selectedContacts.length + 1} contactos`,
+      chat_name: groupName,
+      is_group: 1,
+      created_at: new Date().toISOString(),
+      message_text: `Grupo creado con ${selectedContacts.length + 1} contactos`,
       profilePic: 'https://thumbs.dreamstime.com/b/perfil-de-usuario-vectorial-avatar-predeterminado-179376714.jpg',
     };
+    
     setChatData(prevData => prevData.concat(newGroup));
 
     setGroupName('');
     setSelectedContacts([]);
     setShowCreateGroup(false);
-  };
+  }, [groupName, selectedContacts, chatData]);
 
   return (
     <div className="all-chats">
@@ -82,14 +94,15 @@ export default function Home() {
             onCancel={() => setShowCreateGroup(false)}
           />
         )}
-        <ChatList chats={chatData} onChatClick={handleChatClick} />
+        {loading ? <p>Cargando chats...</p> : <ChatList chats={chatData} onChatClick={handleChatClick} />}
       </div>
       <div className="selectedchat">
         {selectedChat ? (
           <div className="chat-details">
             <div className="chat-header">
-              <img src={selectedChat.profilePic} alt={selectedChat.name} className="profile-pic" />
-              <h3>{selectedChat.name}</h3>
+              <img src={selectedChat.profile_pic} alt={selectedChat.chat_name} className="profile-pic" />
+              <h3>{selectedChat.chat_name}</h3>
+              <p>{selectedChat.phone_number}</p> 
               <button onClick={() => setSelectedChat(null)}>Volver a los chats</button>
             </div>
             <div className="chat-messages">
@@ -111,7 +124,7 @@ export default function Home() {
                 }}
                 placeholder="Escribe un mensaje"
               />
-              <button onClick={handleSendMessage}>Enviar</button>
+              <button onClick={handleSendMessage} disabled={newMessage.trim() === ''}>Enviar</button>
             </div>
           </div>
         ) : (

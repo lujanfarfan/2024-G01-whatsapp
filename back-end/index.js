@@ -48,13 +48,22 @@ app.get('/contactos', async (req, res) => {
 
 app.get('/getChats', async (req, res) => {
 	try {
-		const results = await db.query('SELECT * FROM chats');
+		const results = await db.query(
+			`SELECT chats.id, chat_name, is_group, created_at, phone_number, profile_pic, messages.message_text 
+			FROM chats
+			INNER JOIN users ON chats.chat_name = users.username
+			INNER JOIN messages ON messages.chat_id = chats.id
+			ORDER BY messages.timestamp DESC;` 
+		);
 		res.json(results);
 	} catch (err) {
 		res.status(500).send(err);
 	}
 });
 
+
+
+  
 // Obtener mensajes
 app.get('/chats', (req, res) => {
 	const { chatId } = req.params;
