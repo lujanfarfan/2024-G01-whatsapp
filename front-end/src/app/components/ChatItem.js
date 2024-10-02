@@ -8,7 +8,7 @@ const ChatItem = ({ chat, onClick }) => {
     <div className={styles.chatItem} onClick={() => onClick(chat.id)}>
       <img
         src={chat.profile_pic}
-        alt={chat.chat_name || 'Chat'}
+        alt={chat.chat_name}
         className={styles.profilePic} 
       />
       <div className={styles.chatInfo}>

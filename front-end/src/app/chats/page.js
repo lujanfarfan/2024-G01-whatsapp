@@ -40,40 +40,6 @@ export default function Home() {
     }));
   }, [chatData]);
 
-  const handleSendMessage = useCallback(() => {
-    if (newMessage.trim() === '' || !selectedChat) return;
-
-    const chatId = selectedChat.id;
-    const message = { text: newMessage, sender: 'Tú' };
-
-    setChatMessages(prevMessages => {
-      const existingMessages = prevMessages[chatId] || [];
-      // Solo añade si el nuevo mensaje no es igual al último
-      if (existingMessages.length > 0 && existingMessages[existingMessages.length - 1].text === newMessage) {
-        return prevMessages; // No añade el mensaje duplicado
-      }
-      return {
-        ...prevMessages,
-        [chatId]: [...existingMessages, message],
-      };
-    });
-
-    // Simular la recepción del mensaje de la otra persona
-    const chatMessage = { text: newMessage, sender: 'Persona' };
-    setChatMessages(prevMessages => ({
-      ...prevMessages,
-      [chatId]: [...(prevMessages[chatId] || []), chatMessage],
-    }));
-
-    setChatData(prevData =>
-      prevData.map(chat =>
-        chat.id === chatId ? { ...chat, message_text: newMessage } : chat
-      )
-    );
-
-    setNewMessage('');
-  }, [newMessage, selectedChat]);
-
   const handleCreateGroup = useCallback(() => {
     if (!groupName.trim()) return;
 
@@ -92,6 +58,22 @@ export default function Home() {
     setShowCreateGroup(false);
   }, [groupName, selectedContacts, chatData]);
 
+  const handleSendMessage = useCallback(() => {
+    if (!newMessage.trim() || !selectedChat) return;
+  
+    const updatedMessages = {
+      ...chatMessages,
+      [selectedChat.id]: [
+        ...(chatMessages[selectedChat.id] || []),
+        { text: newMessage, sender: 'Tú' }
+      ],
+    };
+  
+    setChatMessages(updatedMessages);
+    setNewMessage('');
+  
+  }, [newMessage, selectedChat, chatMessages]);
+  
   return (
     <div className="all-chats">
       <div className="chatslist">
