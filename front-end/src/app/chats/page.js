@@ -33,21 +33,36 @@ export default function Home() {
   const handleChatClick = useCallback((chatId) => {
     const chat = chatData.find(chat => chat.id === chatId);
     setSelectedChat(chat);
+
     setChatMessages(prevMessages => ({
       ...prevMessages,
-      [chatId]: prevMessages[chatId] || [{ text: chat.message_text, sender: chat.chat_name }],
+      [chatId]: prevMessages[chatId] ? prevMessages[chatId] : [{ text: chat.message_text, sender: chat.chat_name }],
     }));
   }, [chatData]);
 
   const handleSendMessage = useCallback(() => {
-    if (newMessage.trim() === '') return;
+    if (newMessage.trim() === '' || !selectedChat) return;
 
     const chatId = selectedChat.id;
     const message = { text: newMessage, sender: 'Tú' };
 
+    setChatMessages(prevMessages => {
+      const existingMessages = prevMessages[chatId] || [];
+      // Solo añade si el nuevo mensaje no es igual al último
+      if (existingMessages.length > 0 && existingMessages[existingMessages.length - 1].text === newMessage) {
+        return prevMessages; // No añade el mensaje duplicado
+      }
+      return {
+        ...prevMessages,
+        [chatId]: [...existingMessages, message],
+      };
+    });
+
+    // Simular la recepción del mensaje de la otra persona
+    const chatMessage = { text: newMessage, sender: 'Persona' };
     setChatMessages(prevMessages => ({
       ...prevMessages,
-      [chatId]: [...(prevMessages[chatId] || []), message],
+      [chatId]: [...(prevMessages[chatId] || []), chatMessage],
     }));
 
     setChatData(prevData =>
@@ -70,9 +85,8 @@ export default function Home() {
       message_text: `Grupo creado con ${selectedContacts.length + 1} contactos`,
       profilePic: 'https://thumbs.dreamstime.com/b/perfil-de-usuario-vectorial-avatar-predeterminado-179376714.jpg',
     };
-    
-    setChatData(prevData => prevData.concat(newGroup));
 
+    setChatData(prevData => prevData.concat(newGroup));
     setGroupName('');
     setSelectedContacts([]);
     setShowCreateGroup(false);

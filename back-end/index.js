@@ -62,6 +62,24 @@ app.get('/getChats', async (req, res) => {
 });
 
 
+app.post('/sendMessage', async (req, res) => {
+	const { chatId, message, sender } = req.body;
+  
+	try {
+	  await pool.query(
+		`INSERT INTO messages (chat_id, message_text, sender, timestamp) 
+		 VALUES ($1, $2, $3, NOW())`,
+		[chatId, message, sender]
+	  );
+	  await pool.query(
+		`UPDATE chats SET message_text = $1 WHERE id = $2`,
+		[message, chatId]
+	  );
+	  res.status(201).send('Mensaje enviado');
+	} catch (error) {
+	  res.status(500).send(error);
+	}
+  });
 
   
 // Obtener mensajes
@@ -98,7 +116,6 @@ app.post('/chats', (req, res) => {
 
 app.post('/cualquierCosa', async (req, res) => {
     const phoneNumber = req.body.number;
-	console.log(req.body)
 
     try {
         const results = await db.query(`SELECT phone_number FROM users WHERE phone_number = ${phoneNumber}`);

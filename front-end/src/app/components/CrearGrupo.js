@@ -1,4 +1,3 @@
-"use state"
 import React from 'react';
 
 const CrearGrupo = ({
@@ -32,7 +31,7 @@ const CrearGrupo = ({
               );
             }}
           >
-            <div className="contact-name">{contact.name}</div>
+            <div className="contact-name">{contact.chat_name}</div> 
           </div>
         ))}
       </div>
